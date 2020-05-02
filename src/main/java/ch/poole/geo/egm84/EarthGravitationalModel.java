@@ -1,40 +1,34 @@
 /*
- *    Derived from:
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ * Derived from: GeoTools - The Open Source Java GIS Toolkit http://geotools.org
  *
- *    (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
+ * (C) 2006-2008, Open Source Geospatial Foundation (OSGeo)
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; version 2.1 of the License.
  *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *    This file is derived from NGA/NASA software available for unlimited distribution.
- *    See http://earth-info.nima.mil/GandG/wgs84/gravitymod/.
+ * This file is derived from NGA/NASA software available for unlimited distribution. See
+ * http://earth-info.nima.mil/GandG/wgs84/gravitymod/.
  */
-package com.barbeaudev.geotools.referencing.operation.transform;
+package ch.poole.geo.egm84;
 
 import java.io.*;
 import java.util.StringTokenizer;
 
 /**
  * Transforms vertical coordinates using coefficients from the
- * <A HREF="http://earth-info.nima.mil/GandG/wgs84/gravitymod/wgs84_180/wgs84_180.html">Earth
- * Gravitational Model</A>.
+ * <A HREF="http://earth-info.nima.mil/GandG/wgs84/gravitymod/wgs84_180/wgs84_180.html">Earth Gravitational Model</A>.
  * <p>
  * <strong>Aknowledgement</strong><br>
  * This class is an adaption of Fortran code
- * <code><a href="http://earth-info.nga.mil/GandG/wgs84/gravitymod/wgs84_180/clenqt.for">clenqt.for</a></code>
- * from the <cite>National Geospatial-Intelligence Agency</cite> and available in public domain. The
- * <cite>normalized geopotential coefficients</cite> file bundled in this module is an adaptation of
- * <code><a href="http://earth-info.nima.mil/GandG/wgs84/gravitymod/wgs84_180/egm180.nor">egm180.nor</a></code>
- * file, with some spaces trimmed.
+ * <code><a href="http://earth-info.nga.mil/GandG/wgs84/gravitymod/wgs84_180/clenqt.for">clenqt.for</a></code> from the
+ * <cite>National Geospatial-Intelligence Agency</cite> and available in public domain. The <cite>normalized
+ * geopotential coefficients</cite> file bundled in this module is an adaptation of
+ * <code><a href="http://earth-info.nima.mil/GandG/wgs84/gravitymod/wgs84_180/egm180.nor">egm180.nor</a></code> file,
+ * with some spaces trimmed.
  *
  * @author Pierre Cardinal
  * @author Martin Desruisseaux
@@ -46,11 +40,8 @@ public final class EarthGravitationalModel extends VerticalTransform {
     /**
      * Pre-computed values of some square roots.
      */
-    private static final double SQRT_03 = 1.7320508075688772935274463415059,
-            SQRT_05 = 2.2360679774997896964091736687313,
-            SQRT_13 = 3.6055512754639892931192212674705,
-            SQRT_17 = 4.1231056256176605498214098559741,
-            SQRT_21 = 4.5825756949558400065880471937280;
+    private static final double SQRT_03 = 1.7320508075688772935274463415059, SQRT_05 = 2.2360679774997896964091736687313,
+            SQRT_13 = 3.6055512754639892931192212674705, SQRT_17 = 4.1231056256176605498214098559741, SQRT_21 = 4.5825756949558400065880471937280;
 
     /**
      * The default value for {@link #nmax}.
@@ -98,20 +89,19 @@ public final class EarthGravitationalModel extends VerticalTransform {
     private final double star;
 
     /**
-     * The geopotential coefficients read from the ASCII file.
-     * Those arrays are filled by the {@link #load} method.
+     * The geopotential coefficients read from the ASCII file. Those arrays are filled by the {@link #load} method.
      */
     private final double[] cnmGeopCoef, snmGeopCoef;
 
     /**
-     * Cleanshaw coefficients needed for the selected gravimetric quantities that are computed.
-     * Those arrays are computed by the {@link #initialize} method.
+     * Cleanshaw coefficients needed for the selected gravimetric quantities that are computed. Those arrays are
+     * computed by the {@link #initialize} method.
      */
     private final double[] aClenshaw, bClenshaw, as;
 
     /**
-     * Temporary buffer for use by {@link #heightOffset} only. Allocated once for ever
-     * for avoiding too many objects creation / destruction.
+     * Temporary buffer for use by {@link #heightOffset} only. Allocated once for ever for avoiding too many objects
+     * creation / destruction.
      */
     private final double[] cr, sr, s11, s12;
 
@@ -130,16 +120,14 @@ public final class EarthGravitationalModel extends VerticalTransform {
         this.wgs84 = wgs84;
         if (wgs84) {
             /*
-             * WGS84 model values.
-             * NOTE: The Fortran program gives 3.9860015e+14 for 'rkm' constant. This value has been
+             * WGS84 model values. NOTE: The Fortran program gives 3.9860015e+14 for 'rkm' constant. This value has been
              * modified in later programs. From http://cddis.gsfc.nasa.gov/926/egm96/doc/S11.HTML :
              *
-             *     "We next need to consider the determination of GM, GM0, W0, U0. The value of GM0
-             *      will be that adopted for the updated GM of the WGS84 ellipsoid. This value is
-             *      3.986004418e+14 m³/s², which is identical to that given in the IERS Numerical
-             *      Standards [McCarthy, 1996, Table 4.1]. The best estimate of GM can be taken as
-             *      the same value based on the recommendations of the IAG Special Commission SC3,
-             *      Fundamental Constants [Bursa, 1995b, p. 381]."
+             * "We next need to consider the determination of GM, GM0, W0, U0. The value of GM0 will be that adopted for
+             * the updated GM of the WGS84 ellipsoid. This value is 3.986004418e+14 m³/s², which is identical to that
+             * given in the IERS Numerical Standards [McCarthy, 1996, Table 4.1]. The best estimate of GM can be taken
+             * as the same value based on the recommendations of the IAG Special Commission SC3, Fundamental Constants
+             * [Bursa, 1995b, p. 381]."
              */
             semiMajor = 6378137.0;
             esq = 0.00669437999013;
@@ -172,11 +160,9 @@ public final class EarthGravitationalModel extends VerticalTransform {
     }
 
     /**
-     * Computes the index as it would be returned by the locating array {@code iv}
-     * (from the Fortran code).
+     * Computes the index as it would be returned by the locating array {@code iv} (from the Fortran code).
      * <p>
-     * Tip (used in some place in this class):
-     * {@code locatingArray(n+1)} == {@code locatingArray(n) + n + 1}.
+     * Tip (used in some place in this class): {@code locatingArray(n+1)} == {@code locatingArray(n) + n + 1}.
      */
     private static int locatingArray(final int n) {
         return ((n + 1) * n) >> 1;
@@ -203,8 +189,7 @@ public final class EarthGravitationalModel extends VerticalTransform {
         if (stream == null) {
             throw new FileNotFoundException(filename);
         }
-        final LineNumberReader in;
-        in = new LineNumberReader(new InputStreamReader(stream, "ISO-8859-1"));
+        try (final LineNumberReader in = new LineNumberReader(new InputStreamReader(stream, "ISO-8859-1"))) {
         String line;
         while ((line = in.readLine()) != null) {
             final StringTokenizer tokens = new StringTokenizer(line);
@@ -237,15 +222,14 @@ public final class EarthGravitationalModel extends VerticalTransform {
                 throw exception;
             }
         }
-        in.close();
+        }
         initialize();
     }
 
     /**
-     * Computes the <cite>clenshaw arrays</cite> after all coefficients have been read.
-     * We performs this step in a separated method than {from} in case we wish
-     * to read the coefficient from an other source than an ASCII file in some future
-     * version.
+     * Computes the <cite>clenshaw arrays</cite> after all coefficients have been read. We performs this step in a
+     * separated method than {from} in case we wish to read the coefficient from an other source than an ASCII file in
+     * some future version.
      */
     private final void initialize() {
         /*
@@ -267,8 +251,10 @@ public final class EarthGravitationalModel extends VerticalTransform {
             cnmGeopCoef[10] += c2n[2] / 3;
             /* all nmax */
             cnmGeopCoef[21] += c2n[3] / SQRT_13;
-            if (nmax > 6) cnmGeopCoef[36] += c2n[4] / SQRT_17;
-            if (nmax > 9) cnmGeopCoef[55] += c2n[5] / SQRT_21;
+            if (nmax > 6)
+                cnmGeopCoef[36] += c2n[4] / SQRT_17;
+            if (nmax > 9)
+                cnmGeopCoef[55] += c2n[5] / SQRT_21;
         } else {
             /* all nmax */
             cnmGeopCoef[3] += 4.841732e-04;
@@ -293,21 +279,20 @@ public final class EarthGravitationalModel extends VerticalTransform {
     }
 
     /**
-     * Returns the value to add to a <cite>height above the ellipsoid</cite> in order to get a
-     * <cite>height above the geoid</cite> for the specified geographic coordinate.
+     * Returns the value to add to a <cite>height above the ellipsoid</cite> in order to get a <cite>height above the
+     * geoid</cite> for the specified geographic coordinate.
      *
      * @param longitude The geodetic longitude, in decimal degrees.
-     * @param latitude  The geodetic latitude, in decimal degrees.
-     * @param height    The height above the ellipsoid in metres.
+     * @param latitude The geodetic latitude, in decimal degrees.
+     * @param height The height above the ellipsoid in metres.
      * @return The value to add in order to get the height above the geoid (in metres).
      * @throws Exception if the offset can't be computed for the specified coordinates.
      */
-    public double heightOffset(final double longitude, final double latitude, final double height)
-            throws Exception {
+    public double heightOffset(final double longitude, final double latitude, final double height) {
         /*
-         * Note: no need to ensure that longitude is in [-180..+180°] range, because its value
-         * is used only in trigonometric functions (sin / cos), which roll it as we would expect.
-         * Latitude is used only in trigonometric functions as well.
+         * Note: no need to ensure that longitude is in [-180..+180°] range, because its value is used only in
+         * trigonometric functions (sin / cos), which roll it as we would expect. Latitude is used only in trigonometric
+         * functions as well.
          */
         final double phi = Math.toRadians(latitude);
         final double sin_phi = Math.sin(phi);
@@ -351,8 +336,6 @@ public final class EarthGravitationalModel extends VerticalTransform {
             previousSht = sht;
             sht = (-as[i] * y * f1 * sht) + (s11[i] * cr[i]) + (s12[i] * sr[i]);
         }
-        return ((s11[0] + s12[0]) * f1 + (previousSht * SQRT_03 * y * f2)) * rkm /
-                (semiMajor * (gravn - (height * 0.3086e-5)));
+        return ((s11[0] + s12[0]) * f1 + (previousSht * SQRT_03 * y * f2)) * rkm / (semiMajor * (gravn - (height * 0.3086e-5)));
     }
 }
-

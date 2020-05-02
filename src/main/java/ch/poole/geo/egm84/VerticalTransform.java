@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package com.barbeaudev.geotools.referencing.operation.transform;
+package ch.poole.geo.egm84;
 
 /**
  * Base class for transformations from a <cite>height above the ellipsoid</cite> to a

@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.barbeaudev.geotools.referencing.operation.transform.test;
+package ch.poole.geo.egm84;
 
-import com.barbeaudev.geotools.referencing.operation.transform.EarthGravitationalModel;
 import junit.framework.TestCase;
 import org.junit.Test;
+
+import ch.poole.geo.egm84.EarthGravitationalModel;
 
 /**
  * Tests for EarthGravitationalModel to calculate mean sea level altitude from WGS84 altitude

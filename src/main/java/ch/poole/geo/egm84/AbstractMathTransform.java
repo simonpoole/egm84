@@ -19,7 +19,7 @@
  *    OpenGIS consortium's work is fully acknowledged here.
  */
 
-package com.barbeaudev.geotools.referencing.operation.transform;
+package ch.poole.geo.egm84;
 
 import java.io.Serializable;
 

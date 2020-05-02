@@ -6,3 +6,4 @@ pom.xml.releaseBackup
 .classpath
 /.idea/
 *.iml
+/bin/

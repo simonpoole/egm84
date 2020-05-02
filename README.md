@@ -1,4 +1,7 @@
 # earth-gravitational-model [![Build Status](https://travis-ci.org/barbeau/earth-gravitational-model.svg?branch=master)](https://travis-ci.org/barbeau/earth-gravitational-model)
+
+This a fork of the below to get rid of a few warts and other stuff.
+
 A lightweight port of the GeoTools [EarthGravitationalModel](http://docs.geotools.org/latest/javadocs/org/geotools/referencing/operation/transform/EarthGravitationalModel.html) ([source code](https://github.com/geotools/geotools/blob/master/modules/plugin/referencing3D/src/main/java/org/geotools/referencing/operation/transform/EarthGravitationalModel.java)) that can be used on Android without requiring the entire GeoTools suite.
 
 From the original `EarthGravitationalModel.java` file:
@@ -10,7 +13,7 @@ The `egm180.nor` file is included in `src/main/resources` directory in this proj
 
 ### Requirements
 
-You'll need [JDK 7 or higher](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
+You'll need [JDK 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
 ### Usage
 
