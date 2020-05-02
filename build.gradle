@@ -42,7 +42,7 @@ javadoc {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId 'ch.poole'
+            groupId group
             artifactId ourName
             artifact jar
             artifact sourcesJar
